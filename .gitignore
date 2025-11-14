@@ -1,0 +1,14 @@
+# CodeBlocks build folders
+HotelDescanso/bin/
+HotelDescanso/obj/
+
+# Compiled files
+*.exe
+*.o
+
+# Binary data files
+*.bin
+
+# CodeBlocks project temp files
+*.depend
+*.layout
