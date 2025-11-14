@@ -111,4 +111,3 @@ void removerQuarto(int id) {
 
     printf("Quarto removido com sucesso!\n");
 }
-
