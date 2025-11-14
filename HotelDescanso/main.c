@@ -1,21 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cliente.h"
+#include "quarto.h"
 
-int main(void) {
-    int opcao;
+void menuClientes() {
+    int op;
     Cliente novo;
 
     while (1) {
-        printf("\n=== HOTEL DESCANSO GARANTIDO ===\n");
+        printf("\n=== MENU CLIENTES ===\n");
         printf("1 - Cadastrar cliente\n");
         printf("2 - Listar clientes\n");
-        printf("0 - Sair\n> ");
-        scanf("%d", &opcao);
+        printf("3 - Editar cliente\n");
+        printf("4 - Remover cliente\n");
+        printf("0 - Voltar\n> ");
+        scanf("%d", &op);
         getchar();
 
-        if (opcao == 0) break;
-        else if (opcao == 1) {
+        if (op == 0) return;
+
+        else if (op == 1) {
             printf("Codigo: ");
             scanf("%d", &novo.codigo);
             getchar();
@@ -34,12 +38,77 @@ int main(void) {
 
             cadastrar_cliente(novo);
         }
-        else if (opcao == 2) {
-            listar_clientes();
+        else if (op == 2) listar_clientes();
+        else if (op == 3) {
+            int codigo;
+            printf("Codigo do cliente para editar: ");
+            scanf("%d", &codigo);
+            getchar();
+            editar_cliente(codigo);
         }
-        else {
-            printf("Opção invalida!\n");
+        else if (op == 4) {
+            int codigo;
+            printf("Codigo do cliente para remover: ");
+            scanf("%d", &codigo);
+            getchar();
+            remover_cliente(codigo);
         }
+        else printf("Opcao invalida!\n");
+    }
+}
+
+void menuQuartos() {
+    int op;
+
+    while (1) {
+        printf("\n=== MENU QUARTOS ===\n");
+        printf("1 - Cadastrar quarto\n");
+        printf("2 - Listar quartos\n");
+        printf("3 - Editar quarto\n");
+        printf("4 - Remover quarto\n");
+        printf("0 - Voltar\n> ");
+        scanf("%d", &op);
+        getchar();
+
+        if (op == 0) return;
+
+        else if (op == 1) cadastrarQuarto();
+        else if (op == 2) listarQuartos();
+        else if (op == 3) {
+            int id;
+            printf("ID do quarto para editar: ");
+            scanf("%d", &id);
+            getchar();
+            editarQuarto(id);
+        }
+        else if (op == 4) {
+            int id;
+            printf("ID do quarto para remover: ");
+            scanf("%d", &id);
+            getchar();
+            removerQuarto(id);
+        }
+        else printf("Opcao invalida!\n");
+    }
+}
+
+int main(void) {
+    carregarQuartos();
+
+    int opcao;
+
+    while (1) {
+        printf("\n=== HOTEL DESCANSO GARANTIDO ===\n");
+        printf("1 - Menu Clientes\n");
+        printf("2 - Menu Quartos\n");
+        printf("0 - Sair\n> ");
+        scanf("%d", &opcao);
+        getchar();
+
+        if (opcao == 0) break;
+        else if (opcao == 1) menuClientes();
+        else if (opcao == 2) menuQuartos();
+        else printf("Opcao invalida!\n");
     }
 
     printf("Saindo...\n");

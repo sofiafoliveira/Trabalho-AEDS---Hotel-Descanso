@@ -1,14 +1,23 @@
 # depslib dependency file v1.0
-1763062334 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\main.c
+1763143971 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\main.c
 	<stdio.h>
 	<stdlib.h>
 	"cliente.h"
+	"quarto.h"
 
-1763062315 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\cliente.c
+1763144254 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\cliente.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"cliente.h"
 
-1763062275 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\cliente.h
+1763144186 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\cliente.h
+
+1763143366 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\quarto.h
+
+1763143646 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\quarto.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"quarto.h"
 
