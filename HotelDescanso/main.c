@@ -1,8 +1,10 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "cliente.h"
 #include "quarto.h"
-#include "estadia.h"
+#include "funcionario.h"   
+#include "estadia.h"      
 
 void menuClientes() {
     int op;
@@ -93,6 +95,64 @@ void menuQuartos() {
     }
 }
 
+void menuFuncionarios() {
+    int op;
+    Funcionario f;
+
+    while (1) {
+        printf("\n=== MENU FUNCIONARIOS ===\n");
+        printf("1 - Cadastrar funcionario\n");
+        printf("2 - Listar funcionarios\n");
+        printf("3 - Editar funcionario\n");
+        printf("4 - Remover funcionario\n");
+        printf("0 - Voltar\n> ");
+        scanf("%d", &op);
+        getchar();
+
+        if (op == 0) return;
+
+        else if (op == 1) {
+            printf("ID: ");
+            scanf("%d", &f.id);
+            getchar();
+
+            printf("Nome: ");
+            fgets(f.nome, TAM_NOME_FUNC, stdin);
+            f.nome[strcspn(f.nome, "\n")] = 0;
+
+            printf("Cargo: ");
+            fgets(f.cargo, TAM_CARGO, stdin);
+            f.cargo[strcspn(f.cargo, "\n")] = 0;
+
+            printf("Salario: ");
+            scanf("%f", &f.salario);
+            getchar();
+
+            printf("Telefone: ");
+            fgets(f.telefone, TAM_TEL_FUNC, stdin);
+            f.telefone[strcspn(f.telefone, "\n")] = 0;
+
+            cadastrar_funcionario(f);
+        }
+        else if (op == 2) listar_funcionarios();
+        else if (op == 3) {
+            int id;
+            printf("ID do funcionario para editar: ");
+            scanf("%d", &id);
+            getchar();
+            editar_funcionario(id);
+        }
+        else if (op == 4) {
+            int id;
+            printf("ID do funcionario para remover: ");
+            scanf("%d", &id);
+            getchar();
+            remover_funcionario(id);
+        }
+        else printf("Opcao invalida!\n");
+    }
+}
+
 void menuEstadias() {
     int op;
 
@@ -117,6 +177,8 @@ void menuEstadias() {
 int main(void) {
     carregarQuartos();
     carregarEstadias();
+    carregar_funcionarios();  
+    carregar_clientes();      
 
     int opcao;
 
@@ -124,7 +186,8 @@ int main(void) {
         printf("\n=== HOTEL DESCANSO GARANTIDO ===\n");
         printf("1 - Menu Clientes\n");
         printf("2 - Menu Quartos\n");
-        printf("3 - Menu Estadias\n");
+        printf("3 - Menu Funcionarios\n");
+        printf("4 - Menu Estadias\n");
         printf("0 - Sair\n> ");
         scanf("%d", &opcao);
         getchar();
@@ -132,7 +195,8 @@ int main(void) {
         if (opcao == 0) break;
         else if (opcao == 1) menuClientes();
         else if (opcao == 2) menuQuartos();
-        else if (opcao == 3) menuEstadias();
+        else if (opcao == 3) menuFuncionarios();
+        else if (opcao == 4) menuEstadias();
         else printf("Opcao invalida!\n");
     }
 
