@@ -10,7 +10,7 @@ int totalQuartos = 0;
 
 void salvarQuartos() {
     FILE *f = fopen(ARQ_QUARTOS, "wb");
-    if (f == NULL) {
+    if (!f) {
         printf("Erro ao salvar.\n");
         return;
     }
@@ -21,26 +21,45 @@ void salvarQuartos() {
 
 void carregarQuartos() {
     FILE *f = fopen(ARQ_QUARTOS, "rb");
-    if (f == NULL) return;
+    if (!f) return;
 
     fread(&totalQuartos, sizeof(int), 1, f);
     fread(quartos, sizeof(Quarto), totalQuartos, f);
     fclose(f);
 }
 
+Quarto* buscarQuarto(int numero) {
+    for (int i = 0; i < totalQuartos; i++) {
+        if (quartos[i].numero == numero)
+            return &quartos[i];
+    }
+    return NULL;
+}
+
+int quartoDisponivel(int numero) {
+    Quarto *q = buscarQuarto(numero);
+    if (!q) return 0;
+    return q->ocupado == 0;
+}
+
 void cadastrarQuarto() {
     Quarto q;
 
     printf("\n--- Cadastro de Quarto ---\n");
-    q.id = totalQuartos + 1;
 
-    printf("Tipo do quarto: ");
-    fflush(stdin);
-    fgets(q.tipo, 50, stdin);
-    q.tipo[strcspn(q.tipo, "\n")] = 0;
+    printf("Numero do quarto: ");
+    scanf("%d", &q.numero);
 
-    printf("Preco: ");
-    scanf("%f", &q.preco);
+    if (buscarQuarto(q.numero) != NULL) {
+        printf("Erro: Ja existe um quarto com esse numero!\n");
+        return;
+    }
+
+    printf("Capacidade do quarto: ");
+    scanf("%d", &q.capacidade);
+
+    printf("Valor da diaria: ");
+    scanf("%f", &q.diaria);
 
     q.ocupado = 0;
 
@@ -60,38 +79,36 @@ void listarQuartos() {
 
     printf("\n--- Lista de Quartos ---\n");
     for (int i = 0; i < totalQuartos; i++) {
-        printf("ID: %d | Tipo: %s | Preco: %.2f | Ocupado: %s\n",
-               quartos[i].id,
-               quartos[i].tipo,
-               quartos[i].preco,
-               quartos[i].ocupado ? "Sim" : "Nao");
+        printf("Numero: %d | Capacidade: %d | Diaria: %.2f | Status: %s\n",
+               quartos[i].numero,
+               quartos[i].capacidade,
+               quartos[i].diaria,
+               quartos[i].ocupado ? "Ocupado" : "Desocupado");
     }
 }
 
-void editarQuarto(int id) {
-    for (int i = 0; i < totalQuartos; i++) {
-        if (quartos[i].id == id) {
-            printf("Novo tipo: ");
-            fflush(stdin);
-            fgets(quartos[i].tipo, 50, stdin);
-            quartos[i].tipo[strcspn(quartos[i].tipo, "\n")] = 0;
-
-            printf("Novo preco: ");
-            scanf("%f", &quartos[i].preco);
-
-            salvarQuartos();
-            printf("Quarto editado com sucesso!\n");
-            return;
-        }
+void editarQuarto(int numero) {
+    Quarto *q = buscarQuarto(numero);
+    if (!q) {
+        printf("Quarto nao encontrado!\n");
+        return;
     }
-    printf("Quarto nao encontrado!\n");
+
+    printf("Nova capacidade: ");
+    scanf("%d", &q->capacidade);
+
+    printf("Novo valor da diaria: ");
+    scanf("%f", &q->diaria);
+
+    salvarQuartos();
+    printf("Quarto editado com sucesso!\n");
 }
 
-void removerQuarto(int id) {
+void removerQuarto(int numero) {
     int index = -1;
 
     for (int i = 0; i < totalQuartos; i++) {
-        if (quartos[i].id == id) {
+        if (quartos[i].numero == numero) {
             index = i;
             break;
         }
@@ -112,3 +129,33 @@ void removerQuarto(int id) {
     printf("Quarto removido com sucesso!\n");
 }
 
+int encontrarQuartoDisponivel(int qtdHospedes) {
+    for (int i = 0; i < totalQuartos; i++) {
+
+        if (quartos[i].ocupado) continue;
+        if (quartos[i].capacidade < qtdHospedes) continue;
+
+        return quartos[i].numero;
+    }
+    return -1;
+}
+
+void marcarQuartoOcupado(int numero) {
+    for (int i = 0; i < totalQuartos; i++) {
+        if (quartos[i].numero == numero) {
+            quartos[i].ocupado = 1;
+            salvarQuartos();
+            return;
+        }
+    }
+}
+
+void marcarQuartoDesocupado(int numero) {
+    for (int i = 0; i < totalQuartos; i++) {
+        if (quartos[i].numero == numero) {
+            quartos[i].ocupado = 0;
+            salvarQuartos();
+            return;
+        }
+    }
+}

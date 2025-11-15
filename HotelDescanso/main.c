@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "cliente.h"
 #include "quarto.h"
+#include "estadia.h"
 
 void menuClientes() {
     int op;
@@ -75,25 +76,47 @@ void menuQuartos() {
         else if (op == 1) cadastrarQuarto();
         else if (op == 2) listarQuartos();
         else if (op == 3) {
-            int id;
-            printf("ID do quarto para editar: ");
-            scanf("%d", &id);
+            int numero;
+            printf("Numero do quarto para editar: ");
+            scanf("%d", &numero);
             getchar();
-            editarQuarto(id);
+            editarQuarto(numero);
         }
         else if (op == 4) {
-            int id;
-            printf("ID do quarto para remover: ");
-            scanf("%d", &id);
+            int numero;
+            printf("Numero do quarto para remover: ");
+            scanf("%d", &numero);
             getchar();
-            removerQuarto(id);
+            removerQuarto(numero);
         }
+        else printf("Opcao invalida!\n");
+    }
+}
+
+void menuEstadias() {
+    int op;
+
+    while (1) {
+        printf("\n=== MENU ESTADIAS ===\n");
+        printf("1 - Cadastrar estadia\n");
+        printf("2 - Finalizar estadia\n");
+        printf("3 - Listar estadias\n");
+        printf("0 - Voltar\n> ");
+        scanf("%d", &op);
+        getchar();
+
+        if (op == 0) return;
+
+        else if (op == 1) cadastrarEstadia();
+        else if (op == 2) finalizarEstadia();
+        else if (op == 3) listarEstadias();
         else printf("Opcao invalida!\n");
     }
 }
 
 int main(void) {
     carregarQuartos();
+    carregarEstadias();
 
     int opcao;
 
@@ -101,6 +124,7 @@ int main(void) {
         printf("\n=== HOTEL DESCANSO GARANTIDO ===\n");
         printf("1 - Menu Clientes\n");
         printf("2 - Menu Quartos\n");
+        printf("3 - Menu Estadias\n");
         printf("0 - Sair\n> ");
         scanf("%d", &opcao);
         getchar();
@@ -108,6 +132,7 @@ int main(void) {
         if (opcao == 0) break;
         else if (opcao == 1) menuClientes();
         else if (opcao == 2) menuQuartos();
+        else if (opcao == 3) menuEstadias();
         else printf("Opcao invalida!\n");
     }
 

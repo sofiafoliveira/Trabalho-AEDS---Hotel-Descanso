@@ -2,17 +2,29 @@
 #define QUARTO_H
 
 typedef struct {
-    int id;
-    char tipo[50];
-    float preco;
-    int ocupado; // 0 = livre / 1 = ocupado
+    int numero;
+    int capacidade;
+    float diaria;
+    int ocupado; // 0 = livre, 1 = ocupado
 } Quarto;
+
+extern Quarto quartos[100];
+extern int totalQuartos;
+
+void carregarQuartos();
+void salvarQuartos();
+
+Quarto* buscarQuarto(int numero);
+int quartoDisponivel(int numero);
 
 void cadastrarQuarto();
 void listarQuartos();
-void carregarQuartos();
-void salvarQuartos();
-void editarQuarto(int id);
-void removerQuarto(int id);
+void editarQuarto(int numero);
+void removerQuarto(int numero);
+
+// Usado pela estadia
+int encontrarQuartoDisponivel(int qtdHospedes);
+void marcarQuartoOcupado(int numero);
+void marcarQuartoDesocupado(int numero);
 
 #endif

@@ -35,9 +35,17 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="cliente.h" />
+		<Unit filename="estadia.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="estadia.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="quarto.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="quarto.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
