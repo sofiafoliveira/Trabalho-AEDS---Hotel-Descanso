@@ -185,3 +185,37 @@ void listarEstadias() {
         printf("------------------------\n");
     }
 }
+
+void listarEstadiasPorCliente() {
+    int codigo;
+    printf("\nCodigo do cliente: ");
+    scanf("%d", &codigo);
+
+    // Verifica se o cliente existe
+    if (!cliente_existe(codigo)) {
+        printf("Cliente nao encontrado!\n");
+        return;
+    }
+
+    int encontrou = 0;
+
+    printf("\n=== ESTADIAS DO CLIENTE %d ===\n", codigo);
+
+    for (int i = 0; i < totalEstadias; i++) {
+        if (estadias[i].codigoCliente == codigo) {
+            encontrou = 1;
+
+            printf("\nEstadia %d:\n", estadias[i].codigoEstadia);
+            printf("Quarto: %d\n", estadias[i].idQuarto);
+            printf("Data Entrada: %02d/%02d/%04d\n",
+                   estadias[i].diaEntrada, estadias[i].mesEntrada, estadias[i].anoEntrada);
+            printf("Data Saida: %02d/%02d/%04d\n",
+                   estadias[i].diaSaida, estadias[i].mesSaida, estadias[i].anoSaida);
+            printf("Diarias: %d\n", estadias[i].qtdDiarias);
+        }
+    }
+
+    if (!encontrou) {
+        printf("\nNenhuma estadia encontrada para esse cliente.\n");
+    }
+}

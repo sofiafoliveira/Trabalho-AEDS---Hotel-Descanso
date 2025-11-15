@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1763233513 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\main.c
+1763235696 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\main.c
 	<stdio.h>
 	<stdlib.h>
 	"cliente.h"
@@ -22,13 +22,13 @@
 	<string.h>
 	"quarto.h"
 
-1763233660 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\estadia.c
+1763235634 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\estadia.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"estadia.h"
 
-1763233678 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\estadia.h
+1763235667 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\estadia.h
 	"cliente.h"
 	"quarto.h"
 
