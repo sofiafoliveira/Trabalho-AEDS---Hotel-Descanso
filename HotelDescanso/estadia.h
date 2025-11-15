@@ -27,6 +27,8 @@ void cadastrarEstadia();
 void finalizarEstadia();
 void listarEstadias();
 
+void listarEstadiasPorCliente();
+
 double obterPrecoQuarto(int numero);
 
 #endif

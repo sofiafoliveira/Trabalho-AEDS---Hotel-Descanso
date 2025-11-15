@@ -160,16 +160,17 @@ void menuEstadias() {
         printf("\n=== MENU ESTADIAS ===\n");
         printf("1 - Cadastrar estadia\n");
         printf("2 - Finalizar estadia\n");
-        printf("3 - Listar estadias\n");
+        printf("3 - Listar todas as estadias\n");
+        printf("4 - Listar estadias de um cliente\n"); // NOVO
         printf("0 - Voltar\n> ");
         scanf("%d", &op);
         getchar();
 
         if (op == 0) return;
-
         else if (op == 1) cadastrarEstadia();
         else if (op == 2) finalizarEstadia();
         else if (op == 3) listarEstadias();
+        else if (op == 4) listarEstadiasPorCliente(); // NOVO
         else printf("Opcao invalida!\n");
     }
 }
