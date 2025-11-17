@@ -7,11 +7,12 @@
 typedef struct {
     int codigoEstadia;
     int codigoCliente;
-    int idQuarto; // corresponde ao numero do quarto
+    int idQuarto;
     int qtdHospedes;
     int diaEntrada, mesEntrada, anoEntrada;
     int diaSaida, mesSaida, anoSaida;
     int qtdDiarias;
+    int finalizada;  // NOVO: 0 = ativa, 1 = finalizada
 } Estadia;
 
 extern Estadia estadias[200];
@@ -26,10 +27,7 @@ int conflitoDatas(int d1, int m1, int a1, int d2, int m2, int a2, int numeroQuar
 void cadastrarEstadia();
 void finalizarEstadia();
 void listarEstadias();
-
 void listarEstadiasPorCliente();
-
-double obterPrecoQuarto(int numero);
 
 int calcularPontosCliente(int codigoCliente);
 

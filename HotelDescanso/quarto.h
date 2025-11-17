@@ -27,4 +27,6 @@ int encontrarQuartoDisponivel(int qtdHospedes);
 void marcarQuartoOcupado(int numero);
 void marcarQuartoDesocupado(int numero);
 
+double obterPrecoQuarto(int numero);
+
 #endif
