@@ -42,3 +42,48 @@
 	<string.h>
 	"funcionario.h"
 
+1763418206 source:c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\cliente.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"cliente.h"
+
+1763418206 c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\cliente.h
+
+1763418206 source:c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\estadia.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"estadia.h"
+
+1763418206 c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\estadia.h
+	"cliente.h"
+	"quarto.h"
+
+1763418206 c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\quarto.h
+
+1763418725 source:c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\main.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	"cliente.h"
+	"quarto.h"
+	"funcionario.h"
+	"estadia.h"
+
+1763419037 c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\funcionario.h
+
+1763420012 source:c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\funcionario.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<strings.h>
+	<ctype.h>
+	"funcionario.h"
+
+1763418206 source:c:\users\gj748\onedrive\햞ea de trabalho\trabalho aeds\trabalho-aeds---hotel-descanso\hoteldescanso\quarto.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"quarto.h"
+

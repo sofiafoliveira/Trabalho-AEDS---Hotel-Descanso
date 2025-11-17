@@ -13,13 +13,19 @@ typedef struct {
     char telefone[TAM_TEL_FUNC];
 } Funcionario;
 
-/* CRUD e utilitários */
-int funcionario_existe(int id);
-int cadastrar_funcionario(Funcionario f);
+extern Funcionario funcionarios[200];
+extern int totalFuncionarios;
+
+void carregarFuncionarios();
+void salvarFuncionarios();
+
+int cadastrar_funcionario(Funcionario f);   // <-- AGORA RETORNA int
 void listar_funcionarios();
 void editar_funcionario(int id);
 void remover_funcionario(int id);
-void carregarFuncionarios();
-void salvarFuncionarios();
+
+// NOVAS FUNÇÕES
+void buscar_funcionario_por_codigo(int codigo);
+void buscar_funcionario_por_nome(char *nome);
 
 #endif
