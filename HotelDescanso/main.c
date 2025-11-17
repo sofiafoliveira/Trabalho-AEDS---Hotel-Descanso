@@ -119,6 +119,8 @@ void menuQuartos() {
 void menuFuncionarios() {
     int op;
     Funcionario f;
+    int id;
+    char nomeBusca[TAM_NOME_FUNC];
 
     while (1) {
         printf("\n=== MENU FUNCIONARIOS ===\n");
@@ -126,6 +128,8 @@ void menuFuncionarios() {
         printf("2 - Listar funcionarios\n");
         printf("3 - Editar funcionario\n");
         printf("4 - Remover funcionario\n");
+        printf("5 - Buscar funcionario por codigo\n");
+        printf("6 - Buscar funcionario por nome\n");
         printf("0 - Voltar\n> ");
         scanf("%d", &op);
         getchar();
@@ -155,21 +159,38 @@ void menuFuncionarios() {
 
             cadastrar_funcionario(f);
         }
+
         else if (op == 2) listar_funcionarios();
+
         else if (op == 3) {
-            int id;
             printf("ID do funcionario: ");
             scanf("%d", &id);
             getchar();
             editar_funcionario(id);
         }
+
         else if (op == 4) {
-            int id;
             printf("ID do funcionario: ");
             scanf("%d", &id);
             getchar();
             remover_funcionario(id);
         }
+
+        else if (op == 5) {
+            printf("ID do funcionario: ");
+            scanf("%d", &id);
+            getchar();
+            buscar_funcionario_por_codigo(id);
+        }
+
+        else if (op == 6) {
+            printf("Nome (ou parte): ");
+            fgets(nomeBusca, TAM_NOME_FUNC, stdin);
+            nomeBusca[strcspn(nomeBusca, "\n")] = 0;
+
+            buscar_funcionario_por_nome(nomeBusca);
+        }
+
         else printf("Opcao invalida!\n");
     }
 }
