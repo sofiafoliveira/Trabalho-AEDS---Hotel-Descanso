@@ -35,10 +35,15 @@ int calcularDiarias(int d1, int m1, int a1, int d2, int m2, int a2) {
     return total;
 }
 
+/* conflitoDatas agora IGNORA estadias já finalizadas (finalizada == 1) */
 int conflitoDatas(int d1, int m1, int a1, int d2, int m2, int a2, int numeroQuarto) {
     for (int i = 0; i < totalEstadias; i++) {
 
         if (estadias[i].idQuarto != numeroQuarto)
+            continue;
+
+        /* pula estadias finalizadas (não bloqueiam o quarto) */
+        if (estadias[i].finalizada)
             continue;
 
         int eD = estadias[i].diaEntrada;
@@ -49,11 +54,24 @@ int conflitoDatas(int d1, int m1, int a1, int d2, int m2, int a2, int numeroQuar
         int sM = estadias[i].mesSaida;
         int sA = estadias[i].anoSaida;
 
-        int ini = calcularDiarias(eD, eM, eA, d1, m1, a1);
-        int fim = calcularDiarias(d1, m1, a1, sD, sM, sA);
+        /* Verifica se há interseção entre [entrada,saida) */
+        int inicioNovo = calcularDiarias(eD, eM, eA, d1, m1, a1);
+        int fimNovo = calcularDiarias(d1, m1, a1, sD, sM, sA);
 
-        if (ini <= 0 && fim <= 0)
-            return 1;
+        /* Se os períodos se sobrepõem, retorna conflito */
+        /* condição simples: se data nova começa antes da saída existente e data nova termina depois da entrada existente */
+        int novoInicioEmRelacaoAExistente = calcularDiarias(eD, eM, eA, d1, m1, a1); // >=0 => novo inicio >= entrada existente
+        int novoFimEmRelacaoAExistente = calcularDiarias(eD, eM, eA, d2, m2, a2); // >=0 => novo fim >= entrada existente
+
+        /* Mais simples: converter cada data em "dias desde uma base" e comparar intervalos */
+        int startExisting = calcularDiarias(1,1,1, eD,eM,eA);
+        int endExisting   = calcularDiarias(1,1,1, sD,sM,sA);
+        int startNew      = calcularDiarias(1,1,1, d1,m1,a1);
+        int endNew        = calcularDiarias(1,1,1, d2,m2,a2);
+
+        if (!(endNew <= startExisting || startNew >= endExisting)) {
+            return 1; /* há sobreposição */
+        }
     }
     return 0;
 }
@@ -105,6 +123,8 @@ void cadastrarEstadia() {
         return;
     }
 
+    e.finalizada = 0; /* marca como ativa */
+
     estadias[totalEstadias] = e;
     totalEstadias++;
     salvarEstadias();
@@ -114,6 +134,8 @@ void cadastrarEstadia() {
     printf("Estadia cadastrada! Quarto %d reservado.\n", numero);
 }
 
+/* finalizarEstadia marca a estadia como finalizada, libera o quarto e salva.
+    Mantemos histórico e pontos. */
 void finalizarEstadia() {
     int cod;
     printf("\nCodigo da estadia: ");
@@ -135,6 +157,11 @@ void finalizarEstadia() {
 
     Estadia *e = &estadias[index];
 
+    if (e->finalizada) {
+        printf("Estadia ja foi finalizada anteriormente.\n");
+        return;
+    }
+
     double preco = obterPrecoQuarto(e->idQuarto);
     double total = preco * e->qtdDiarias;
 
@@ -145,13 +172,12 @@ void finalizarEstadia() {
     printf("Valor diaria: %.2f\n", preco);
     printf("TOTAL: R$ %.2f\n", total);
 
-    marcarQuartoDesocupado(e->idQuarto);
-
-    for (int i = index; i < totalEstadias - 1; i++)
-        estadias[i] = estadias[i + 1];
-
-    totalEstadias--;
+    /* marca finalizada e salva */
+    e->finalizada = 1;
     salvarEstadias();
+
+    /* libera o quarto */
+    marcarQuartoDesocupado(e->idQuarto);
 
     printf("Estadia finalizada!\n");
 }
@@ -182,6 +208,7 @@ void listarEstadias() {
         printf("Entrada: %02d/%02d/%04d\n", e.diaEntrada, e.mesEntrada, e.anoEntrada);
         printf("Saida:   %02d/%02d/%04d\n", e.diaSaida, e.mesSaida, e.anoSaida);
         printf("Diarias: %d\n", e.qtdDiarias);
+        printf("Status: %s\n", e.finalizada ? "Finalizada" : "Ativa");
         printf("------------------------\n");
     }
 }
@@ -212,6 +239,7 @@ void listarEstadiasPorCliente() {
             printf("Data Saida: %02d/%02d/%04d\n",
                    estadias[i].diaSaida, estadias[i].mesSaida, estadias[i].anoSaida);
             printf("Diarias: %d\n", estadias[i].qtdDiarias);
+            printf("Status: %s\n", estadias[i].finalizada ? "Finalizada" : "Ativa");
         }
     }
 
@@ -224,7 +252,7 @@ int calcularPontosCliente(int codigoCliente) {
     int pontos = 0;
 
     for (int i = 0; i < totalEstadias; i++) {
-        if (estadias[i].codigoCliente == codigoCliente) {
+        if (estadias[i].codigoCliente == codigoCliente && estadias[i].finalizada) {
             pontos += estadias[i].qtdDiarias * 10; // 10 pontos por diária
         }
     }

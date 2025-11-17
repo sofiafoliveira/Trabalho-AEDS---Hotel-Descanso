@@ -44,14 +44,14 @@ void menuClientes() {
         else if (op == 2) listar_clientes();
         else if (op == 3) {
             int codigo;
-            printf("Codigo do cliente para editar: ");
+            printf("Codigo do cliente: ");
             scanf("%d", &codigo);
             getchar();
             editar_cliente(codigo);
         }
         else if (op == 4) {
             int codigo;
-            printf("Codigo do cliente para remover: ");
+            printf("Codigo do cliente: ");
             scanf("%d", &codigo);
             getchar();
             remover_cliente(codigo);
@@ -79,14 +79,14 @@ void menuQuartos() {
         else if (op == 2) listarQuartos();
         else if (op == 3) {
             int numero;
-            printf("Numero do quarto para editar: ");
+            printf("Numero do quarto: ");
             scanf("%d", &numero);
             getchar();
             editarQuarto(numero);
         }
         else if (op == 4) {
             int numero;
-            printf("Numero do quarto para remover: ");
+            printf("Numero do quarto: ");
             scanf("%d", &numero);
             getchar();
             removerQuarto(numero);
@@ -137,14 +137,14 @@ void menuFuncionarios() {
         else if (op == 2) listar_funcionarios();
         else if (op == 3) {
             int id;
-            printf("ID do funcionario para editar: ");
+            printf("ID do funcionario: ");
             scanf("%d", &id);
             getchar();
             editar_funcionario(id);
         }
         else if (op == 4) {
             int id;
-            printf("ID do funcionario para remover: ");
+            printf("ID do funcionario: ");
             scanf("%d", &id);
             getchar();
             remover_funcionario(id);
@@ -161,16 +161,34 @@ void menuEstadias() {
         printf("1 - Cadastrar estadia\n");
         printf("2 - Finalizar estadia\n");
         printf("3 - Listar todas as estadias\n");
-        printf("4 - Listar estadias de um cliente\n"); // NOVO
+        printf("4 - Listar estadias de um cliente\n");
+        printf("5 - Ver pontos de fidelidade do cliente\n"); // NOVO
         printf("0 - Voltar\n> ");
         scanf("%d", &op);
         getchar();
 
         if (op == 0) return;
+
         else if (op == 1) cadastrarEstadia();
         else if (op == 2) finalizarEstadia();
         else if (op == 3) listarEstadias();
-        else if (op == 4) listarEstadiasPorCliente(); // NOVO
+        else if (op == 4) listarEstadiasPorCliente();
+
+        else if (op == 5) {   // NOVO
+            int codigo;
+            printf("Codigo do cliente: ");
+            scanf("%d", &codigo);
+            getchar();
+
+            if (!cliente_existe(codigo)) {
+                printf("Cliente nao encontrado!\n");
+            } else {
+                int pontos = calcularPontosCliente(codigo);
+                printf("\nCliente %d possui %d pontos de fidelidade.\n",
+                       codigo, pontos);
+            }
+        }
+
         else printf("Opcao invalida!\n");
     }
 }
