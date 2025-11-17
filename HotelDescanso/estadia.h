@@ -31,4 +31,6 @@ void listarEstadiasPorCliente();
 
 double obterPrecoQuarto(int numero);
 
+int calcularPontosCliente(int codigoCliente);
+
 #endif
