@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include "cliente.h"
 #include "quarto.h"
-#include "funcionario.h"   
-#include "estadia.h"      
+#include "funcionario.h"
+#include "estadia.h"
 
 void menuClientes() {
     int op;
@@ -178,8 +178,8 @@ void menuEstadias() {
 int main(void) {
     carregarQuartos();
     carregarEstadias();
-    carregar_funcionarios();  
-    carregar_clientes();      
+    carregarFuncionarios();
+    carregar_clientes();
 
     int opcao;
 

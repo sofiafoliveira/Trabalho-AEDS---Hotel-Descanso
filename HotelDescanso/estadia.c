@@ -219,3 +219,15 @@ void listarEstadiasPorCliente() {
         printf("\nNenhuma estadia encontrada para esse cliente.\n");
     }
 }
+
+int calcularPontosCliente(int codigoCliente) {
+    int pontos = 0;
+
+    for (int i = 0; i < totalEstadias; i++) {
+        if (estadias[i].codigoCliente == codigoCliente) {
+            pontos += estadias[i].qtdDiarias * 10; // 10 pontos por diária
+        }
+    }
+
+    return pontos;
+}

@@ -12,10 +12,14 @@ typedef struct {
     char telefone[TAM_TELEFONE];
 } Cliente;
 
+extern Cliente clientes[200];
+extern int totalClientes;
+
 int cadastrar_cliente(Cliente novo);
 void listar_clientes();
 int cliente_existe(int codigo);
 void editar_cliente(int codigo);
 void remover_cliente(int codigo);
+void carregar_clientes();
 
 #endif

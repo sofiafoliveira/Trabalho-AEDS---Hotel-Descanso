@@ -1,9 +1,11 @@
 # depslib dependency file v1.0
-1763235696 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\main.c
+1763236114 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\main.c
+	<string.h>
 	<stdio.h>
 	<stdlib.h>
 	"cliente.h"
 	"quarto.h"
+	"funcionario.h"
 	"estadia.h"
 
 1763144254 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\cliente.c
@@ -12,7 +14,7 @@
 	<string.h>
 	"cliente.h"
 
-1763144186 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\cliente.h
+1763386268 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\cliente.h
 
 1763233230 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\quarto.h
 
@@ -22,13 +24,21 @@
 	<string.h>
 	"quarto.h"
 
-1763235634 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\estadia.c
+1763385744 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\estadia.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"estadia.h"
 
-1763235667 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\estadia.h
+1763385541 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\estadia.h
 	"cliente.h"
 	"quarto.h"
+
+1763236114 c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\funcionario.h
+
+1763236114 source:c:\users\sofia\onedrive\desktop\trabalho aeds - hotel descanso\hoteldescanso\funcionario.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"funcionario.h"
 
