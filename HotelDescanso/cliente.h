@@ -22,4 +22,7 @@ void editar_cliente(int codigo);
 void remover_cliente(int codigo);
 void carregar_clientes();
 
+Cliente buscar_cliente_por_codigo(int codigo);
+void buscar_cliente_por_nome(const char *nome);
+
 #endif

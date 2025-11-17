@@ -9,6 +9,8 @@
 void menuClientes() {
     int op;
     Cliente novo;
+    int codigo;
+    char nomeBusca[TAM_NOME];
 
     while (1) {
         printf("\n=== MENU CLIENTES ===\n");
@@ -16,6 +18,8 @@ void menuClientes() {
         printf("2 - Listar clientes\n");
         printf("3 - Editar cliente\n");
         printf("4 - Remover cliente\n");
+        printf("5 - Buscar cliente por codigo\n");
+        printf("6 - Buscar cliente por nome\n");
         printf("0 - Voltar\n> ");
         scanf("%d", &op);
         getchar();
@@ -41,21 +45,38 @@ void menuClientes() {
 
             cadastrar_cliente(novo);
         }
+
         else if (op == 2) listar_clientes();
+
         else if (op == 3) {
-            int codigo;
-            printf("Codigo do cliente: ");
+            printf("Codigo do cliente para editar: ");
             scanf("%d", &codigo);
             getchar();
             editar_cliente(codigo);
         }
+
         else if (op == 4) {
-            int codigo;
-            printf("Codigo do cliente: ");
+            printf("Codigo do cliente para remover: ");
             scanf("%d", &codigo);
             getchar();
             remover_cliente(codigo);
         }
+
+        else if (op == 5) {
+            printf("Codigo do cliente: ");
+            scanf("%d", &codigo);
+            getchar();
+            buscar_cliente_por_codigo(codigo);
+        }
+
+        else if (op == 6) {
+            printf("Nome (ou parte): ");
+            fgets(nomeBusca, TAM_NOME, stdin);
+            nomeBusca[strcspn(nomeBusca, "\n")] = 0;
+
+            buscar_cliente_por_nome(nomeBusca);
+        }
+
         else printf("Opcao invalida!\n");
     }
 }

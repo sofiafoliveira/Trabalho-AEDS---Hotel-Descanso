@@ -124,3 +124,43 @@ void remover_cliente(int codigo) {
 
     printf("Cliente removido com sucesso!\n");
 }
+
+Cliente buscar_cliente_por_codigo(int codigo) {
+    Cliente vazio;
+    vazio.codigo = -1;
+
+    for (int i = 0; i < totalClientes; i++) {
+        if (clientes[i].codigo == codigo) {
+            Cliente c = clientes[i];
+
+            printf("\n=== CLIENTE ENCONTRADO ===\n");
+            printf("Codigo: %d\nNome: %s\nEndereco: %s\nTelefone: %s\n",
+                   c.codigo, c.nome, c.endereco, c.telefone);
+
+            return c;
+        }
+    }
+
+    printf("Cliente com codigo %d nao encontrado.\n", codigo);
+    return vazio;
+}
+
+void buscar_cliente_por_nome(const char *nome) {
+    int encontrou = 0;
+
+    printf("\n=== RESULTADOS PARA '%s' ===\n", nome);
+
+    for (int i = 0; i < totalClientes; i++) {
+        if (strstr(clientes[i].nome, nome) != NULL) {
+            encontrou = 1;
+            Cliente c = clientes[i];
+
+            printf("\nCodigo: %d\nNome: %s\nEndereco: %s\nTelefone: %s\n",
+                   c.codigo, c.nome, c.endereco, c.telefone);
+        }
+    }
+
+    if (!encontrou) {
+        printf("Nenhum cliente encontrado com esse nome.\n");
+    }
+}
