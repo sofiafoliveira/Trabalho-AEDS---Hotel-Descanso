@@ -4,44 +4,46 @@
 #include "cliente.h"
 #include "quarto.h"
 
-/* estrutura de estadia */
+/* Estrutura de estadia */
 typedef struct {
     int codigoEstadia;
     int codigoCliente;
-    int idQuarto; /* número do quarto */
+    int idQuarto; /* numero do quarto */
     int qtdHospedes;
     int diaEntrada, mesEntrada, anoEntrada;
     int diaSaida, mesSaida, anoSaida;
     int qtdDiarias;
+    int finalizada; /* 0 = ativa, 1 = finalizada */
 } Estadia;
 
-/* variáveis globais (definidas em estadia.c) */
-extern Estadia estadias[200];
+/* Variáveis globais (definidas em estadia.c) */
+extern Estadia estadias[500];
 extern int totalEstadias;
 
-/* persistência */
+/* Persistência */
 void salvarEstadias();
 void carregarEstadias();
 
-/* utilitários / validações */
-int calcularDiarias(int d1, int m1, int a1, int d2, int m2, int a2);
+/* Utilitários / validações */
 int validarData(int d, int m, int a);
-long dateToDays(int d, int m, int a); /* para comparar datas */
+long dateToDays(int d, int m, int a);
 int periodoOverlap(int s1d, int s1m, int s1a, int e1d, int e1m, int e1a,
                    int s2d, int s2m, int s2a, int e2d, int e2m, int e2a);
-int conflitoDatas(int d1, int m1, int a1, int d2, int m2, int a2, int numeroQuarto);
-int quartoAtende(int numeroQuarto, int qtdHospedes); /* capacidade + status */
+int calcularDiarias(int d1, int m1, int a1, int d2, int m2, int a2);
 
-/* operações do módulo */
+/* Regras específicas */
+int conflitoDatas(int d1, int m1, int a1, int d2, int m2, int a2, int numeroQuarto);
+int quartoAtende(int numeroQuarto, int qtdHospedes);
+int clienteTemEstadiaAtiva(int codigoCliente);
+
+/* Operações do módulo */
 void cadastrarEstadia();
 void finalizarEstadia();
 void listarEstadias();
 void listarEstadiasPorCliente();
 
-/* consulta de preço (usa dados de quarto) */
+/* Cálculo e utilitários */
 double obterPrecoQuarto(int numero);
-
-/* função extra solicitada em issue: calcular pontos de fidelidade */
-int calcularPontosCliente(int codigoCliente);
+int calcularPontosCliente(int codigoCliente); /* 10 pontos por diária, só de estadias finalizadas */
 
 #endif
