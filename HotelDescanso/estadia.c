@@ -8,83 +8,118 @@
 Estadia estadias[200];
 int totalEstadias = 0;
 
+/* --- Persistência --- */
 void salvarEstadias() {
     FILE *f = fopen(ARQ_ESTADIAS, "wb");
-    if (!f) return;
-
+    if (!f) {
+        printf("Erro ao salvar as estadias.\n");
+        return;
+    }
     fwrite(&totalEstadias, sizeof(int), 1, f);
     fwrite(estadias, sizeof(Estadia), totalEstadias, f);
-
     fclose(f);
 }
 
 void carregarEstadias() {
     FILE *f = fopen(ARQ_ESTADIAS, "rb");
-    if (!f) return;
-
+    if (!f) {
+        totalEstadias = 0;
+        return;
+    }
     fread(&totalEstadias, sizeof(int), 1, f);
     fread(estadias, sizeof(Estadia), totalEstadias, f);
-
     fclose(f);
 }
 
-int calcularDiarias(int d1, int m1, int a1, int d2, int m2, int a2) {
-    int total = (a2 - a1) * 365;
-    total += (m2 - m1) * 30;
-    total += (d2 - d1);
-    return total;
+/* --- Datas / utilitários --- */
+
+/* retorna 1 se data válida (simples: checa limites comuns) */
+int validarData(int d, int m, int a) {
+    if (a < 1900 || a > 9999) return 0;
+    if (m < 1 || m > 12) return 0;
+    if (d < 1) return 0;
+    int diasMes[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+    /* ano bissexto */
+    int bissexto = ( (a % 4 == 0 && a % 100 != 0) || (a % 400 == 0) );
+    if (bissexto && m == 2) {
+        if (d > 29) return 0;
+    } else {
+        if (d > diasMes[m]) return 0;
+    }
+    return 1;
 }
 
-/* conflitoDatas agora IGNORA estadias já finalizadas (finalizada == 1) */
-int conflitoDatas(int d1, int m1, int a1, int d2, int m2, int a2, int numeroQuarto) {
-    for (int i = 0; i < totalEstadias; i++) {
+/* converte data para número contínuo de dias (aproximação correta para comparação) */
+long dateToDays(int d, int m, int a) {
+    /* usa contagem simples: dias + meses*31 + anos*365 — suficiente para comparar ordem */
+    return (long)a * 365L + (long)m * 31L + (long)d;
+}
 
-        if (estadias[i].idQuarto != numeroQuarto)
-            continue;
+/* retorna 1 se os períodos [s1, e1) e [s2, e2) se sobrepõem */
+int periodoOverlap(int s1d, int s1m, int s1a, int e1d, int e1m, int e1a,
+                   int s2d, int s2m, int s2a, int e2d, int e2m, int e2a) {
+    long S1 = dateToDays(s1d,s1m,s1a);
+    long E1 = dateToDays(e1d,e1m,e1a); /* saída deve ser > entrada */
+    long S2 = dateToDays(s2d,s2m,s2a);
+    long E2 = dateToDays(e2d,e2m,e2a);
+    /* período inválido: consideramos que saída precisa ser > entrada */
+    if (E1 <= S1 || E2 <= S2) return 1; /* sinaliza conflito/erro */
+    /* overlap se S1 < E2 && S2 < E1 */
+    return (S1 < E2 && S2 < E1) ? 1 : 0;
+}
 
-        /* pula estadias finalizadas (não bloqueiam o quarto) */
-        if (estadias[i].finalizada)
-            continue;
+/* calcula número de diárias entre duas datas (assume datas válidas; retorno >0) */
+int calcularDiarias(int d1, int m1, int a1, int d2, int m2, int a2) {
+    long inicio = dateToDays(d1,m1,a1);
+    long fim    = dateToDays(d2,m2,a2);
+    long diff = fim - inicio;
+    if (diff <= 0) return 0;
+    return (int)diff;
+}
 
-        int eD = estadias[i].diaEntrada;
-        int eM = estadias[i].mesEntrada;
-        int eA = estadias[i].anoEntrada;
-
-        int sD = estadias[i].diaSaida;
-        int sM = estadias[i].mesSaida;
-        int sA = estadias[i].anoSaida;
-
-        /* Verifica se há interseção entre [entrada,saida) */
-        int inicioNovo = calcularDiarias(eD, eM, eA, d1, m1, a1);
-        int fimNovo = calcularDiarias(d1, m1, a1, sD, sM, sA);
-
-        /* Se os períodos se sobrepõem, retorna conflito */
-        /* condição simples: se data nova começa antes da saída existente e data nova termina depois da entrada existente */
-        int novoInicioEmRelacaoAExistente = calcularDiarias(eD, eM, eA, d1, m1, a1); // >=0 => novo inicio >= entrada existente
-        int novoFimEmRelacaoAExistente = calcularDiarias(eD, eM, eA, d2, m2, a2); // >=0 => novo fim >= entrada existente
-
-        /* Mais simples: converter cada data em "dias desde uma base" e comparar intervalos */
-        int startExisting = calcularDiarias(1,1,1, eD,eM,eA);
-        int endExisting   = calcularDiarias(1,1,1, sD,sM,sA);
-        int startNew      = calcularDiarias(1,1,1, d1,m1,a1);
-        int endNew        = calcularDiarias(1,1,1, d2,m2,a2);
-
-        if (!(endNew <= startExisting || startNew >= endExisting)) {
-            return 1; /* há sobreposição */
+/* verifica se o quarto atende a qtdHospedes e está desocupado */
+int quartoAtende(int numeroQuarto, int qtdHospedes) {
+    /* usar a array quartos[] e totalQuartos do módulo quarto (declared extern em quarto.h) */
+    for (int i = 0; i < totalQuartos; i++) {
+        if (quartos[i].numero == numeroQuarto) {
+            if (quartos[i].ocupado) return 0;
+            if (quartos[i].capacidade < qtdHospedes) return 0;
+            return 1;
         }
     }
     return 0;
 }
 
+/* checa se existe conflito de datas para o quarto dado
+   retorna 1 se CONFLITO (não pode reservar), 0 se OK */
+int conflitoDatas(int d1, int m1, int a1, int d2, int m2, int a2, int numeroQuarto) {
+    /* valida datas primeiro */
+    if (!validarData(d1,m1,a1) || !validarData(d2,m2,a2)) return 1; /* trata como conflito */
+    /* para cada estadia existente no mesmo quarto verifica overlap */
+    for (int i = 0; i < totalEstadias; i++) {
+        if (estadias[i].idQuarto != numeroQuarto) continue;
+        /* se a estadia já estiver finalizada (não temos campo finalizada separado aqui),
+           ela já foi removida no nosso fluxo. Então comparamos só com o que está no array. */
+        if ( periodoOverlap( estadias[i].diaEntrada, estadias[i].mesEntrada, estadias[i].anoEntrada,
+                             estadias[i].diaSaida,  estadias[i].mesSaida,  estadias[i].anoSaida,
+                             d1, m1, a1, d2, m2, a2 ) ) {
+            return 1; /* conflito */
+        }
+    }
+    return 0; /* sem conflito */
+}
+
+/* --- Operações principais --- */
+
+/* cadastrar estadia: sistema escolhe quarto automaticamente (encontrarQuartoDisponivel) */
 void cadastrarEstadia() {
     Estadia e;
-
     printf("\n--- CADASTRO DE ESTADIA ---\n");
 
     e.codigoEstadia = totalEstadias + 1;
 
     printf("Codigo do cliente: ");
-    scanf("%d", &e.codigoCliente);
+    if (scanf("%d", &e.codigoCliente) != 1) { getchar(); printf("Entrada invalida.\n"); return; }
 
     if (!cliente_existe(e.codigoCliente)) {
         printf("Cliente inexistente!\n");
@@ -92,62 +127,76 @@ void cadastrarEstadia() {
     }
 
     printf("Quantidade de hospedes: ");
-    scanf("%d", &e.qtdHospedes);
+    if (scanf("%d", &e.qtdHospedes) != 1) { getchar(); printf("Entrada invalida.\n"); return; }
 
     printf("Data de entrada (dd mm aaaa): ");
-    scanf("%d %d %d", &e.diaEntrada, &e.mesEntrada, &e.anoEntrada);
+    if (scanf("%d %d %d", &e.diaEntrada, &e.mesEntrada, &e.anoEntrada) != 3) { printf("Formato invalido.\n"); return; }
 
     printf("Data de saida (dd mm aaaa): ");
-    scanf("%d %d %d", &e.diaSaida, &e.mesSaida, &e.anoSaida);
+    if (scanf("%d %d %d", &e.diaSaida, &e.mesSaida, &e.anoSaida) != 3) { printf("Formato invalido.\n"); return; }
 
-    int numero = encontrarQuartoDisponivel(e.qtdHospedes);
-
-    if (numero == -1) {
-        printf("Nenhum quarto disponível!\n");
+    /* valida datas */
+    if (!validarData(e.diaEntrada,e.mesEntrada,e.anoEntrada) || !validarData(e.diaSaida,e.mesSaida,e.anoSaida)) {
+        printf("Erro: uma das datas eh invalida.\n");
         return;
     }
 
+    /* saída deve ser depois da entrada */
+    if (dateToDays(e.diaSaida,e.mesSaida,e.anoSaida) <= dateToDays(e.diaEntrada,e.mesEntrada,e.anoEntrada)) {
+        printf("Erro: data de saida deve ser depois da data de entrada.\n");
+        return;
+    }
+
+    /* encontra quarto que atende à capacidade e esteja desocupado */
+    int numero = encontrarQuartoDisponivel(e.qtdHospedes);
+    if (numero == -1) {
+        printf("Nenhum quarto disponível que atenda a quantidade de hospedes.\n");
+        return;
+    }
+
+    /* verifica capacidade/status no quarto encontrado (proteção extra) */
+    if (!quartoAtende(numero, e.qtdHospedes)) {
+        printf("Quarto %d nao atende os requisitos (capacidade/ocupado).\n", numero);
+        return;
+    }
+
+    /* verifica conflito de datas (sobreposição) */
     if (conflitoDatas(e.diaEntrada, e.mesEntrada, e.anoEntrada,
                       e.diaSaida, e.mesSaida, e.anoSaida, numero)) {
-        printf("Quarto ocupado no período!\n");
+        printf("Quarto %d ja possui estadia nesse periodo ou datas invalidas.\n", numero);
         return;
     }
 
+    /* define quarto e calcula diárias */
     e.idQuarto = numero;
-
     e.qtdDiarias = calcularDiarias(e.diaEntrada, e.mesEntrada, e.anoEntrada,
                                    e.diaSaida, e.mesSaida, e.anoSaida);
 
     if (e.qtdDiarias <= 0) {
-        printf("Datas invalidas!\n");
+        printf("Erro no calculo de diarias (datas invalidas).\n");
         return;
     }
 
-    e.finalizada = 0; /* marca como ativa */
-
+    /* persiste em memória e arquivo */
     estadias[totalEstadias] = e;
     totalEstadias++;
     salvarEstadias();
 
+    /* marcar quarto como ocupado (função vem de quarto.c) */
     marcarQuartoOcupado(numero);
 
-    printf("Estadia cadastrada! Quarto %d reservado.\n", numero);
+    printf("Estadia cadastrada com sucesso! Quarto %d reservado.\n", numero);
 }
 
-/* finalizarEstadia marca a estadia como finalizada, libera o quarto e salva.
-    Mantemos histórico e pontos. */
+/* finalizar estadia: calcular valor, liberar quarto e remover estadia da lista */
 void finalizarEstadia() {
     int cod;
     printf("\nCodigo da estadia: ");
-    scanf("%d", &cod);
+    if (scanf("%d", &cod) != 1) { getchar(); printf("Entrada invalida.\n"); return; }
 
     int index = -1;
-
     for (int i = 0; i < totalEstadias; i++) {
-        if (estadias[i].codigoEstadia == cod) {
-            index = i;
-            break;
-        }
+        if (estadias[i].codigoEstadia == cod) { index = i; break; }
     }
 
     if (index == -1) {
@@ -156,32 +205,29 @@ void finalizarEstadia() {
     }
 
     Estadia *e = &estadias[index];
-
-    if (e->finalizada) {
-        printf("Estadia ja foi finalizada anteriormente.\n");
-        return;
-    }
-
     double preco = obterPrecoQuarto(e->idQuarto);
     double total = preco * e->qtdDiarias;
 
-    printf("\n--- FINALIZANDO ---\n");
+    printf("\n--- FINALIZANDO ESTADIA ---\n");
     printf("Cliente: %d\n", e->codigoCliente);
     printf("Quarto: %d\n", e->idQuarto);
     printf("Diarias: %d\n", e->qtdDiarias);
     printf("Valor diaria: %.2f\n", preco);
-    printf("TOTAL: R$ %.2f\n", total);
+    printf("TOTAL A PAGAR: R$ %.2f\n", total);
 
-    /* marca finalizada e salva */
-    e->finalizada = 1;
-    salvarEstadias();
-
-    /* libera o quarto */
+    /* libera quarto e remove estadia do vetor */
     marcarQuartoDesocupado(e->idQuarto);
 
-    printf("Estadia finalizada!\n");
+    for (int i = index; i < totalEstadias - 1; i++)
+        estadias[i] = estadias[i + 1];
+
+    totalEstadias--;
+    salvarEstadias();
+
+    printf("Estadia finalizada e quarto liberado com sucesso!\n");
 }
 
+/* obter preco do quarto (usa array quartos[] do módulo quarto) */
 double obterPrecoQuarto(int numero) {
     for (int i = 0; i < totalQuartos; i++) {
         if (quartos[i].numero == numero)
@@ -190,17 +236,15 @@ double obterPrecoQuarto(int numero) {
     return 0;
 }
 
+/* listar todas as estadias */
 void listarEstadias() {
     if (totalEstadias == 0) {
         printf("\nNenhuma estadia cadastrada!\n");
         return;
     }
-
     printf("\n=== LISTA DE ESTADIAS ===\n");
-
     for (int i = 0; i < totalEstadias; i++) {
         Estadia e = estadias[i];
-
         printf("\nCodigo da Estadia: %d\n", e.codigoEstadia);
         printf("Cliente: %d\n", e.codigoCliente);
         printf("Quarto: %d\n", e.idQuarto);
@@ -208,54 +252,44 @@ void listarEstadias() {
         printf("Entrada: %02d/%02d/%04d\n", e.diaEntrada, e.mesEntrada, e.anoEntrada);
         printf("Saida:   %02d/%02d/%04d\n", e.diaSaida, e.mesSaida, e.anoSaida);
         printf("Diarias: %d\n", e.qtdDiarias);
-        printf("Status: %s\n", e.finalizada ? "Finalizada" : "Ativa");
         printf("------------------------\n");
     }
 }
 
+/* listar estadias de um cliente (por código) */
 void listarEstadiasPorCliente() {
     int codigo;
     printf("\nCodigo do cliente: ");
-    scanf("%d", &codigo);
+    if (scanf("%d", &codigo) != 1) { getchar(); printf("Entrada invalida.\n"); return; }
 
-    // Verifica se o cliente existe
     if (!cliente_existe(codigo)) {
         printf("Cliente nao encontrado!\n");
         return;
     }
 
     int encontrou = 0;
-
     printf("\n=== ESTADIAS DO CLIENTE %d ===\n", codigo);
-
     for (int i = 0; i < totalEstadias; i++) {
         if (estadias[i].codigoCliente == codigo) {
             encontrou = 1;
-
-            printf("\nEstadia %d:\n", estadias[i].codigoEstadia);
-            printf("Quarto: %d\n", estadias[i].idQuarto);
-            printf("Data Entrada: %02d/%02d/%04d\n",
-                   estadias[i].diaEntrada, estadias[i].mesEntrada, estadias[i].anoEntrada);
-            printf("Data Saida: %02d/%02d/%04d\n",
-                   estadias[i].diaSaida, estadias[i].mesSaida, estadias[i].anoSaida);
-            printf("Diarias: %d\n", estadias[i].qtdDiarias);
-            printf("Status: %s\n", estadias[i].finalizada ? "Finalizada" : "Ativa");
+            Estadia *e = &estadias[i];
+            printf("\nEstadia %d:\n", e->codigoEstadia);
+            printf("Quarto: %d\n", e->idQuarto);
+            printf("Entrada: %02d/%02d/%04d\n", e->diaEntrada, e->mesEntrada, e->anoEntrada);
+            printf("Saida:   %02d/%02d/%04d\n", e->diaSaida, e->mesSaida, e->anoSaida);
+            printf("Diarias: %d\n", e->qtdDiarias);
         }
     }
-
-    if (!encontrou) {
-        printf("\nNenhuma estadia encontrada para esse cliente.\n");
-    }
+    if (!encontrou) printf("\nNenhuma estadia encontrada para esse cliente.\n");
 }
 
+/* calcular pontos de fidelidade (10 pontos por diaria) */
 int calcularPontosCliente(int codigoCliente) {
     int pontos = 0;
-
     for (int i = 0; i < totalEstadias; i++) {
-        if (estadias[i].codigoCliente == codigoCliente && estadias[i].finalizada) {
-            pontos += estadias[i].qtdDiarias * 10; // 10 pontos por diária
+        if (estadias[i].codigoCliente == codigoCliente) {
+            pontos += estadias[i].qtdDiarias * 10;
         }
     }
-
     return pontos;
 }
